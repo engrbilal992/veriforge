@@ -1,0 +1,24 @@
+Package: veriforge
+Version: 1.0.0
+Section: devel
+Priority: optional
+Architecture: amd64
+Maintainer: Muhammad Bilal <bilalsajid695@gmail.com>
+Depends: python3 (>= 3.10), python3-pip, python3-venv
+Recommends: iverilog, gtkwave
+Suggests: verilator
+Description: Verilog RTL simulation IDE with waveform viewer
+ VeriForge is a desktop IDE for writing, simulating, and debugging
+ Verilog and SystemVerilog designs. It runs Icarus Verilog in the
+ background, parses VCD output, and displays interactive waveforms
+ in a built-in viewer — no GTKWave required.
+ .
+ Features:
+  - Tabbed editor with Verilog/SV syntax highlighting
+  - One-click simulation via iverilog + vvp
+  - Interactive VCD waveform viewer (zoom, pan, markers, export)
+  - YAML-driven module and testbench code generation
+  - TCL scripting console (Vivado-style)
+  - Six themes including Dracula default
+  - Full RV32I example included
+Homepage: https://github.com/engrbilal992/veriforge

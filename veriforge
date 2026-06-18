@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# VeriForge launcher / CLI.
+#   ./veriforge                 -> GUI
+#   ./veriforge new myproj      -> CLI: create project
+#   ./veriforge sim myproj      -> CLI: headless simulate
+#   ./veriforge open myproj     -> GUI opened on a project
+HERE="$(cd "$(dirname "$0")" && pwd)"
+cd "$HERE"
+if [ -d .venv ]; then . .venv/bin/activate; fi
+exec python3 main.py "$@"

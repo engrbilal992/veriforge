@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1f29"/>
+      <stop offset="100%" style="stop-color:#12131a"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e0a"/>
+      <stop offset="100%" style="stop-color:#050805"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- App background -->
+  <rect width="256" height="256" rx="40" fill="url(#bg)"/>
+
+  <!-- Outer border accent -->
+  <rect x="2" y="2" width="252" height="252" rx="39" fill="none" stroke="#44475a" stroke-width="2"/>
+
+  <!-- Oscilloscope screen bezel -->
+  <rect x="22" y="44" width="212" height="140" rx="10" fill="#0d0f0d" stroke="#2a2d3a" stroke-width="2"/>
+
+  <!-- Screen face -->
+  <rect x="28" y="50" width="200" height="128" rx="6" fill="url(#screen)"/>
+
+  <!-- Grid lines - horizontal -->
+  <line x1="28" y1="82" x2="228" y2="82" stroke="#0e1e0e" stroke-width="0.8"/>
+  <line x1="28" y1="114" x2="228" y2="114" stroke="#0e1e0e" stroke-width="0.8"/>
+  <line x1="28" y1="146" x2="228" y2="146" stroke="#0e1e0e" stroke-width="0.8"/>
+
+  <!-- Grid lines - vertical -->
+  <line x1="78" y1="50" x2="78" y2="178" stroke="#0e1e0e" stroke-width="0.8"/>
+  <line x1="128" y1="50" x2="128" y2="178" stroke="#0e1e0e" stroke-width="0.8"/>
+  <line x1="178" y1="50" x2="178" y2="178" stroke="#0e1e0e" stroke-width="0.8"/>
+
+  <!-- Signal trace 1: clock (top row) -->
+  <polyline
+    points="28,68 48,68 48,60 68,60 68,68 88,68 88,60 108,60 108,68 128,68 128,60 148,60 148,68 168,68 168,60 188,60 188,68 208,68 208,60 228,60"
+    fill="none" stroke="#00e676" stroke-width="2" stroke-linejoin="miter" filter="url(#glow)" opacity="0.85"/>
+
+  <!-- Signal trace 2: complex digital (middle) -->
+  <polyline
+    points="28,114 44,114 44,96 60,96 60,114 72,114 72,96 80,96 80,114 100,114 100,96 120,96 120,114 136,114 136,96 152,96 152,96 160,96 160,114 180,114 180,96 196,96 196,114 228,114"
+    fill="none" stroke="#00e676" stroke-width="2.5" stroke-linejoin="miter" filter="url(#glow)"/>
+
+  <!-- Signal trace 3: bus (bottom row, wide steps) -->
+  <!-- bus outline top/bottom with value boxes -->
+  <line x1="28" y1="153" x2="44" y2="153" stroke="#00e676" stroke-width="2"/>
+  <line x1="28" y1="165" x2="44" y2="165" stroke="#00e676" stroke-width="2"/>
+  <line x1="44" y1="153" x2="50" y2="159" stroke="#00e676" stroke-width="2"/>
+  <line x1="44" y1="165" x2="50" y2="159" stroke="#00e676" stroke-width="2"/>
+  <line x1="50" y1="159" x2="50" y2="159"/>
+  <line x1="50" y1="153" x2="100" y2="153" stroke="#00e676" stroke-width="2"/>
+  <line x1="50" y1="165" x2="100" y2="165" stroke="#00e676" stroke-width="2"/>
+  <line x1="100" y1="153" x2="106" y2="159" stroke="#00e676" stroke-width="2"/>
+  <line x1="100" y1="165" x2="106" y2="159" stroke="#00e676" stroke-width="2"/>
+  <line x1="106" y1="153" x2="160" y2="153" stroke="#00e676" stroke-width="2"/>
+  <line x1="106" y1="165" x2="160" y2="165" stroke="#00e676" stroke-width="2"/>
+  <line x1="160" y1="153" x2="166" y2="159" stroke="#00e676" stroke-width="2"/>
+  <line x1="160" y1="165" x2="166" y2="159" stroke="#00e676" stroke-width="2"/>
+  <line x1="166" y1="153" x2="228" y2="153" stroke="#00e676" stroke-width="2"/>
+  <line x1="166" y1="165" x2="228" y2="165" stroke="#00e676" stroke-width="2"/>
+
+  <!-- Bus value labels -->
+  <text x="62" y="162" font-family="monospace" font-size="9" fill="#00e676" opacity="0.7">0xA4</text>
+  <text x="118" y="162" font-family="monospace" font-size="9" fill="#00e676" opacity="0.7">0xFF</text>
+  <text x="178" y="162" font-family="monospace" font-size="9" fill="#00e676" opacity="0.7">0x03</text>
+
+  <!-- Time cursor (red vertical line) -->
+  <line x1="128" y1="50" x2="128" y2="178" stroke="#ff1744" stroke-width="1.5" opacity="0.7"/>
+  <polygon points="124,50 132,50 128,56" fill="#ff1744" opacity="0.7"/>
+
+  <!-- Bottom stand / base -->
+  <rect x="96" y="190" width="64" height="8" rx="4" fill="#2a2d3a"/>
+  <rect x="80" y="196" width="96" height="6" rx="3" fill="#343746"/>
+
+  <!-- "VeriForge" label at bottom -->
+  <text x="128" y="237" font-family="monospace" font-size="14" font-weight="bold"
+        fill="#bd93f9" text-anchor="middle" letter-spacing="2">VERIFORGE</text>
+  <text x="128" y="250" font-family="monospace" font-size="7"
+        fill="#6272a4" text-anchor="middle" letter-spacing="1">RTL SIMULATION IDE</text>
+
+  <!-- Corner accent dots (like scope knobs) -->
+  <circle cx="34" cy="57" r="3" fill="#44475a"/>
+  <circle cx="222" cy="57" r="3" fill="#44475a"/>
+  <circle cx="34" cy="171" r="3" fill="#44475a"/>
+  <circle cx="222" cy="171" r="3" fill="#44475a"/>
+</svg>

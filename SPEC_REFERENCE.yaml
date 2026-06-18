@@ -1,0 +1,104 @@
+# =============================================================================
+# VeriForge YAML spec — COMPLETE REFERENCE
+# =============================================================================
+# Copy this file, delete what you don't need, and edit the rest. Generate with:
+#
+#     ./veriforge gen <project> THIS_FILE.yaml
+#   or in the GUI:  open the .yaml, press Generate (F6)
+#
+# RULES OF THUMB
+#   * Indentation is significant (2 spaces). No tabs.
+#   * QUOTE any expression that contains ':' or '?'  (YAML treats ':' specially)
+#         logic: {count: "en ? count + 1'b1 : count"}   <-- quoted
+#   * A port value can be a bare direction string OR a {dir,width,type} mapping.
+#   * width: a number (8 -> [7:0]), a parameter name (WIDTH -> [WIDTH-1:0]),
+#            or an explicit range string ("15:0" -> [15:0]).
+#   * type: wire (default) or reg. Outputs driven in always blocks need reg.
+#   * One spec can hold ONE module (top-level keys) or MANY (a 'modules:' list).
+# =============================================================================
+
+module: cpu_core              # -> generates cpu_core.v   (required)
+
+# ---- parameters ----  (optional) become Verilog `parameter`s
+parameters:
+  WIDTH: 32
+  DEPTH: 16
+
+# ---- ports ----  (required)
+ports:
+  clk:      input
+  rst:      input
+  start:    input
+  data_in:  {dir: input,  width: WIDTH}
+  addr:     {dir: input,  width: "4"}          # [3:0]
+  data_out: {dir: output, width: WIDTH, type: reg}
+  busy:     {dir: output, type: reg}
+  done:     {dir: output, type: reg}
+  result:   {dir: output, width: WIDTH, type: reg}
+
+# ---- combinational assigns ----  (optional)
+#   Continuous `assign` statements. RHS is emitted verbatim — quote if it has ':'/'?'.
+assign:
+  # zero_flag: (result == '0)        # example
+  addr_valid: "addr < DEPTH"
+
+# ---- sequential logic ----  (optional)
+#   One clocked always block with an async reset and per-register next-values.
+sequential:
+  clock: clk
+  reset: rst
+  reset_edge: posedge          # posedge | negedge (reset polarity edge)
+  reset_value:
+    result: 0
+    data_out: 0
+  logic:
+    # register: next-value expression  (quote if it contains : or ?)
+    result:   "start ? data_in : result"
+    data_out: data_in
+
+# ---- finite state machine ----  (optional)
+#   Generates: state localparams, a state register, next-state case, Moore outputs.
+fsm:
+  clock: clk
+  reset: rst
+  state_reg: state             # name of the state register (default: state)
+  states: [IDLE, LOAD, RUN, DONE]
+  reset_state: IDLE
+  transitions:
+    IDLE: {next: LOAD, when: start}   # go to LOAD when 'start' is true
+    LOAD: {next: RUN}                 # unconditional
+    RUN:  {next: DONE, when: done}
+    DONE: {next: IDLE}
+  outputs:                     # Moore outputs asserted per state (optional)
+    LOAD: {busy: 1}
+    RUN:  {busy: 1}
+    DONE: {done: 1}
+
+# ---- testbench ----  (optional)
+#   true            -> generate <module>_tb.v with defaults
+#   a mapping       -> customise it (all fields optional)
+testbench:
+  clock: clk                   # which input is the clock
+  reset: rst                   # which input is the reset
+  period: 10                   # clock period in ns
+  runtime: 500                 # ns to run before $finish
+  dump: true                   # emit $dumpfile/$dumpvars for the waveform viewer
+
+# =============================================================================
+# MULTI-MODULE FORM (alternative top-level): use a 'modules:' list instead of
+# the single-module keys above. Each entry takes the SAME keys as a module.
+#
+# modules:
+#   - module: mux2
+#     parameters: {W: 8}
+#     ports:
+#       sel: input
+#       a:   {dir: input,  width: W}
+#       b:   {dir: input,  width: W}
+#       y:   {dir: output, width: W}
+#     assign: {y: "sel ? b : a"}
+#
+#   - module: dff
+#     ports: {clk: input, d: input, q: {dir: output, type: reg}}
+#     sequential: {clock: clk, logic: {q: d}}
+# =============================================================================

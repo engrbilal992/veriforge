@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Open the VeriForge GUI, optionally on a project directory.
+#   ./ide_veriforge                 -> GUI
+#   ./ide_veriforge path/to/project -> GUI opened on that project
+HERE="$(cd "$(dirname "$0")" && pwd)"
+cd "$HERE"
+if [ -d .venv ]; then . .venv/bin/activate; fi
+exec python3 main.py open "$@"

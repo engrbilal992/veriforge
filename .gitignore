@@ -1,0 +1,32 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# IDE / editor
+.claude/
+.idea/
+.vscode/
+
+# VeriForge temp outputs at repo root
+*.vcd
+*.fst
+*.csv
+waveform*.png
+a.out
+
+# release artifacts — go in GitHub Releases, not the repo
+*.deb
+*.zip
+
+# raw screenshots dumped at project root
+Screenshot*.png
+
+# project artifacts inside sub-projects (any depth)
+**/build/a.out
+**/sim/*.vcd
+**/sim/*.fst
+**/logs/*.log

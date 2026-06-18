@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=VeriForge
+GenericName=Verilog IDE
+Comment=RTL simulation IDE — write, simulate, view waveforms
+Exec=sh -c "cd %k/.. && ./veriforge"
+Icon=veriforge
+Terminal=false
+StartupNotify=true
+Categories=Development;Electronics;IDE;Engineering;
+Keywords=verilog;rtl;simulation;hdl;fpga;asic;systemverilog;waveform;vcd;
