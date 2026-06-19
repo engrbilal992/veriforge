@@ -104,19 +104,25 @@ class VCD:
                 val = c0.lower()
                 ident = line[1:]
                 for s in v._by_ident.get(ident, ()):
-                    s.changes.append((time, val))
+                    # Skip redundant same-value entries (Icarus emits these for
+                    # delta-cycle settling).  GTKWave filters them the same way.
+                    if not s.changes or s.changes[-1][1] != val:
+                        s.changes.append((time, val))
             elif c0 in "bB":
                 # bus: b1010 ident
                 sp = line.split()
                 if len(sp) == 2:
                     val = sp[0][1:]
                     for s in v._by_ident.get(sp[1], ()):
-                        s.changes.append((time, val))
+                        if not s.changes or s.changes[-1][1] != val:
+                            s.changes.append((time, val))
             elif c0 in "rR":
                 sp = line.split()
                 if len(sp) == 2:
+                    val = sp[0][1:]
                     for s in v._by_ident.get(sp[1], ()):
-                        s.changes.append((time, sp[0][1:]))
+                        if not s.changes or s.changes[-1][1] != val:
+                            s.changes.append((time, val))
             # ignore $dumpvars/$end markers
         return v
 

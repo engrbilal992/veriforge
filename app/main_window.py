@@ -53,6 +53,7 @@ class StyledInputDialog(QDialog):
         d = QDialog(parent)
         d.setWindowTitle(title)
         d.setMinimumWidth(380)
+        d.setWindowModality(Qt.ApplicationModal)
         if chrome_c:
             d.setStyleSheet(
                 f"QDialog{{background:{chrome_c['win']};}}"
@@ -69,6 +70,14 @@ class StyledInputDialog(QDialog):
         bb.accepted.connect(d.accept); bb.rejected.connect(d.reject)
         lay.addWidget(bb)
         edit.setFocus(); edit.selectAll()
+        # Explicitly center the dialog over the parent window so it is always
+        # visible regardless of monitor size or multi-screen layout.
+        d.adjustSize()
+        if parent is not None:
+            from PySide6.QtCore import QPoint
+            center = parent.mapToGlobal(
+                QPoint(parent.width() // 2, parent.height() // 2))
+            d.move(center.x() - d.width() // 2, center.y() - d.height() // 2)
         ok = d.exec() == QDialog.Accepted
         return edit.text(), ok
 
@@ -617,6 +626,10 @@ class MainWindow(QMainWindow):
                               f"QPushButton{{background:{c['accent']};color:#fff;"
                               f"border:none;border-radius:6px;padding:7px 14px;}}"
                               f"QPushButton:hover{{background:{c['panel_fg']};}}")
+        box.adjustSize()
+        from PySide6.QtCore import QPoint
+        center = self.mapToGlobal(QPoint(self.width() // 2, self.height() // 2))
+        box.move(center.x() - box.width() // 2, center.y() - box.height() // 2)
         box.exec()
         clicked = box.clickedButton()
         if clicked not in (b_v, b_y):

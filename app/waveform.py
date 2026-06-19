@@ -429,18 +429,44 @@ class _Canvas(QWidget):
             if t_left <= ct <= t_right:
                 seq.append((self.t_to_x(ct), cv))
         seq.append((self.t_to_x(t_right), None))
+
+        # Merge transitions that fall within the same pixel column.
+        # Any remaining same-timestamp or sub-pixel changes are collapsed to the
+        # final value in that pixel, matching GTKWave's rendering behaviour.
+        merged = [list(seq[0])]
+        for x, v in seq[1:]:
+            if v is None:
+                merged.append([x, v])
+            elif int(x) == int(merged[-1][0]):
+                merged[-1] = [x, v]
+            else:
+                merged.append([x, v])
+        seq = merged
+
         base = QColor(color)
+        prev_v = None   # last drawn value — used to suppress same-value transitions
         for i in range(len(seq) - 1):
             x1, v1 = seq[i]; x2, _ = seq[i + 1]
-            if v1 is None: continue
+            if v1 is None:
+                prev_v = None
+                continue
             x1 = max(x1, NAME_W)
-            if x2 <= NAME_W: continue
+            if x2 <= NAME_W:
+                prev_v = v1
+                continue
+            # Draw a vertical transition edge only when:
+            #   • this is not the initial-state segment (i > 0), and
+            #   • the value actually changed from the previous segment.
+            # This suppresses (a) the false edge at the left gutter boundary and
+            # (b) the "ghost spike" produced by same-value redundant VCD entries.
+            draw_left = (i > 0) and (v1 != prev_v)
             if is_bus:
-                self._bus(p, x1, x2, top, bot, mid, v1, radix, fm, base)
+                self._bus(p, x1, x2, top, bot, mid, v1, radix, fm, base, draw_left)
             else:
-                self._bit(p, x1, x2, top, bot, mid, v1, base)
+                self._bit(p, x1, x2, top, bot, mid, v1, base, draw_left)
+            prev_v = v1
 
-    def _bit(self, p, x1, x2, top, bot, mid, v, base):
+    def _bit(self, p, x1, x2, top, bot, mid, v, base, draw_left=True):
         if v == "x":
             p.setPen(QPen(QColor("#ff5555"), 1.8))
             p.drawLine(int(x1), top, int(x2), bot); p.drawLine(int(x1), bot, int(x2), top); return
@@ -450,14 +476,19 @@ class _Canvas(QWidget):
         p.setPen(QPen(base, 1.7))
         lvl = top if v == "1" else bot
         p.drawLine(int(x1), lvl, int(x2), lvl)
-        p.drawLine(int(x1), top, int(x1), bot)
+        if draw_left:
+            p.drawLine(int(x1), top, int(x1), bot)
 
-    def _bus(self, p, x1, x2, top, bot, mid, bits, radix, fm, base):
+    def _bus(self, p, x1, x2, top, bot, mid, bits, radix, fm, base, draw_left=True):
         has_x = "x" in bits.lower(); has_z = "z" in bits.lower()
         col = QColor("#ff5555") if has_x else (QColor("#4f9dff") if has_z else base)
         p.setPen(QPen(col, 1.7))
-        p.drawLine(int(x1), mid, int(x1)+3, top); p.drawLine(int(x1), mid, int(x1)+3, bot)
-        p.drawLine(int(x1)+3, top, int(x2)-3, top); p.drawLine(int(x1)+3, bot, int(x2)-3, bot)
+        if draw_left:
+            p.drawLine(int(x1), mid, int(x1)+3, top); p.drawLine(int(x1), mid, int(x1)+3, bot)
+            top_start = int(x1)+3
+        else:
+            top_start = int(x1)
+        p.drawLine(top_start, top, int(x2)-3, top); p.drawLine(top_start, bot, int(x2)-3, bot)
         p.drawLine(int(x2)-3, top, int(x2), mid); p.drawLine(int(x2)-3, bot, int(x2), mid)
         label = fmt_value(bits, radix)
         if (x2 - x1) > fm.horizontalAdvance(label) + 8:
