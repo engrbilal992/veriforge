@@ -17,11 +17,11 @@
 
 ## Install
 
-Download `veriforge_1.0.0_amd64.zip` from the [Releases](https://github.com/engrbilal992/veriforge/releases) page, then:
+Download `veriforge_1.0.1_amd64.zip` from the [Releases](https://github.com/engrbilal992/veriforge/releases) page, then:
 
 ```bash
-unzip veriforge_1.0.0_amd64.zip
-sudo dpkg -i veriforge_1.0.0_amd64.deb
+unzip veriforge_1.0.1_amd64.zip
+sudo dpkg -i veriforge_1.0.1_amd64.deb
 sudo apt install -f
 veriforge
 ```
