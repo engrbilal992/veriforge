@@ -8,7 +8,7 @@
 set -e
 cd "$(dirname "$0")/.."   # project root
 
-VERSION="1.0.0"
+VERSION=$(grep "^Version:" packaging/DEBIAN/control | awk '{print $2}')
 ARCH="amd64"
 PKG="veriforge_${VERSION}_${ARCH}"
 STAGING="/tmp/${PKG}"
